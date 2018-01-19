@@ -2,8 +2,8 @@ import tkinter as tk
 import tkinter.font as tkFont
 import functools as ft
 import game as gm
-import players
-from gameBoard import *
+import players, ai
+from gameBoard import Moves
 
 class GameApp(tk.Tk, gm.GameObserver):
 	"""GameApp is an application that allows a user to interactively play tic-tac-toe."""
@@ -59,21 +59,21 @@ class GameApp(tk.Tk, gm.GameObserver):
 			self.resetButton.configure(state = "normal")
 			for button in [but for row in self.buttons for but in row]:
 				button.configure(state = 'disabled')
-			self.message.configure(text = {GameBoard.X: self.game.XPlayer.name + " won!", 
-				GameBoard.O: self.game.OPlayer.name + " won!", GameBoard.NA: "It's a tie!"}
+			self.message.configure(text = {Moves.X: self.game.XPlayer.name + " won!", 
+				Moves.O: self.game.OPlayer.name + " won!", Moves.NA: "It's a tie!"}
 				[self.game.board.winner])
 		elif isinstance(event, gm.PlayerMoveEvent):
-			self.message.configure(text = "It's " + {GameBoard.X: self.game.XPlayer.name, 
-				GameBoard.O: self.game.OPlayer.name}[self.game.turn] + "'s turn")
-			self.buttons[event.row][event.column].configure(text = {GameBoard.X : "X", 
-				GameBoard.O : "O"}[event.mark])
+			self.message.configure(text = "It's " + {Moves.X: self.game.XPlayer.name, 
+				Moves.O: self.game.OPlayer.name}[self.game.turn] + "'s turn")
+			self.buttons[event.row][event.column].configure(text = {Moves.X : "X", 
+				Moves.O : "O"}[event.mark])
 			self.after(100, self.game.run)
 		elif event == None:
 			self.score.configure(text = self.game.XPlayer.name + ": " + 
 				repr(self.game.XScore) + " " * 5 + self.game.OPlayer.name + ": " + 
 				repr(self.game.OScore))
-			self.message.configure(text = "It's " + {GameBoard.X: self.game.XPlayer.name, 
-				GameBoard.O: self.game.OPlayer.name}[self.game.turn] + "'s turn")
+			self.message.configure(text = "It's " + {Moves.X: self.game.XPlayer.name, 
+				Moves.O: self.game.OPlayer.name}[self.game.turn] + "'s turn")
 			self.game.run()
 
 	def reset(self):
@@ -88,7 +88,7 @@ class GameApp(tk.Tk, gm.GameObserver):
 				if not self.game.isValid(r, c):
 					continue
 				def helper(r, c):
-					self.buttons[r][c].configure(text = {GameBoard.X: "X", GameBoard.O: "O"}
+					self.buttons[r][c].configure(text = {Moves.X: "X", Moves.O: "O"}
 						[self.game.turn])
 					for button in [but for row in self.buttons for but in row]:
 						button.configure(command = lambda: None)
@@ -99,5 +99,5 @@ class GameApp(tk.Tk, gm.GameObserver):
 if __name__ == "__main__":
 	game = GameApp()
 	game.title("Game is Solved")
-	game.registerPlayers(players.BasicHuman("Bob", game.game, game), players.AI("Jane", game.game))
+	game.registerPlayers(players.BasicHuman("Alex", game.game, game), ai.AI("Jak", game.game))
 	game.mainloop()

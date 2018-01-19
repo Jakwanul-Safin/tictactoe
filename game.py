@@ -1,4 +1,4 @@
-from gameBoard import *
+from gameBoard import Moves, GameBoard
 import random as rnd
 
 class GameEvent:
@@ -22,13 +22,13 @@ class Game:
 		self.XScore, self.OScore, self.ties = 0, 0, 0
 		self.observers = []
 		self.board = GameBoard()
-		self.turn = GameBoard.X
+		self.turn = Moves.X
 
 	def registerPlayers(self, XPlayer, OPlayer):
 		self.XPlayer = XPlayer
 		self.OPlayer = OPlayer
-		XPlayer.setMark(GameBoard.X)
-		OPlayer.setMark(GameBoard.O)
+		XPlayer.setMark(Moves.X)
+		OPlayer.setMark(Moves.O)
 		self.observers.extend([XPlayer, OPlayer])
 
 	def register(self, *observers):
@@ -40,7 +40,7 @@ class Game:
 
 	def newRound(self):
 		self.board = GameBoard()
-		self.turn = GameBoard.X
+		self.turn = Moves.X
 		if rnd.randint(0, 1) == 0:
 			self.swapPlayers()
 
@@ -51,11 +51,11 @@ class Game:
 		temp = self.XScore
 		self.XScore = self.OScore
 		self.OScore = temp
-		self.XPlayer.setMark(GameBoard.X)
-		self.OPlayer.setMark(GameBoard.O)
+		self.XPlayer.setMark(Moves.X)
+		self.OPlayer.setMark(Moves.O)
 
 	def askForMove(self):
-		self.PlayerToPlay = {GameBoard.X: self.XPlayer, GameBoard.O: self.OPlayer}[self.turn]
+		self.PlayerToPlay = {Moves.X: self.XPlayer, Moves.O: self.OPlayer}[self.turn]
 		self.PlayerToPlay.makeMove()
 
 	def play(self, player, row, col):
@@ -66,14 +66,14 @@ class Game:
 		self.notify(PlayerMoveEvent(player.getMark(), row, col))
 
 	def advanceTurn(self):
-		self.turn = {GameBoard.X : GameBoard.O, GameBoard.O: GameBoard.X}[self.turn]
-		self.PlayerToPlay = {GameBoard.X: self.XPlayer, GameBoard.O: self.OPlayer}[self.turn]
+		self.turn = {Moves.X : Moves.O, Moves.O: Moves.X}[self.turn]
+		self.PlayerToPlay = {Moves.X: self.XPlayer, Moves.O: self.OPlayer}[self.turn]
 
 	def run(self):
 		if self.board.gameOver: 
-			if self.board.winner == GameBoard.X:
+			if self.board.winner == Moves.X:
 				self.XScore += 1
-			elif self.board.winner == GameBoard.O:
+			elif self.board.winner == Moves.O:
 				self.OScore += 1
 			else:
 				self.ties += 1
@@ -81,7 +81,7 @@ class Game:
 		else:
 			self.askForMove()
 	def isValid(self, row, col):
-		return self.board.board[row][col] == GameBoard.NA
+		return self.board.board[row][col] == Moves.NA
 
 	def isGameOver(self):
 		return self.board.gameOver
